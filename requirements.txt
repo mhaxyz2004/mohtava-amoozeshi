@@ -1,0 +1,13 @@
+Django==4.2.0
+djangorestframework==3.14.0
+django-cors-headers==4.0.0
+Pillow==10.0.0
+python-decouple==3.8
+requests==2.31.0
+psycopg2-binary==2.9.6
+gunicorn==21.2.0
+whitenoise==6.5.0
+django-crispy-forms==2.0
+crispy-bootstrap5==0.7
+celery==5.3.0
+redis==4.5.4
