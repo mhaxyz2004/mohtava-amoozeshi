@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block title %}تماس با ما - محتوای آموزشی{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-lg">
+            <div class="card-body p-5">
+                <h3 class="mb-4">📧 تماس با ما</h3>
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    {% for field in form %}
+                    <div class="mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                        <div class="alert alert-danger mt-2">
+                            {{ field.errors }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary w-100 btn-lg">ارسال پیام</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-body p-5">
+                <h3 class="mb-4">📞 اطلاعات تماس</h3>
+                <div class="mb-4">
+                    <p><i class="bi bi-envelope" style="font-size: 1.5rem; color: #667eea;"></i></p>
+                    <h5>ایمیل</h5>
+                    <p class="text-muted">mohtava@example.com</p>
+                </div>
+                <div class="mb-4">
+                    <p><i class="bi bi-telephone" style="font-size: 1.5rem; color: #667eea;"></i></p>
+                    <h5>تلفن</h5>
+                    <p class="text-muted">0123456789</p>
+                </div>
+                <div class="mb-4">
+                    <p><i class="bi bi-clock" style="font-size: 1.5rem; color: #667eea;"></i></p>
+                    <h5>ساعات کاری</h5>
+                    <p class="text-muted">شنبه تا پنج‌شنبه: 9:00 - 17:00</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-12">
+        <h3 class="mb-4">📋 تیکت‌های پشتیبانی شما</h3>
+        {% if tickets %}
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>موضوع</th>
+                        <th>اولویت</th>
+                        <th>وضعیت</th>
+                        <th>تاریخ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ticket in tickets %}
+                    <tr>
+                        <td>{{ ticket.subject }}</td>
+                        <td>
+                            {% if ticket.priority == 'high' %}
+                            <span class="badge bg-danger">زیاد</span>
+                            {% elif ticket.priority == 'medium' %}
+                            <span class="badge bg-warning">متوسط</span>
+                            {% else %}
+                            <span class="badge bg-info">کم</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if ticket.status == 'closed' %}
+                            <span class="badge bg-success">بسته‌شد��</span>
+                            {% elif ticket.status == 'in_progress' %}
+                            <span class="badge bg-info">در حال بررسی</span>
+                            {% else %}
+                            <span class="badge bg-warning">باز</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ ticket.created_at|date:"j F Y" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted">هنوز تیکتی ارسال نشده است</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

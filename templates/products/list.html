@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}لیست محصولات - محتوای آموزشی{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-3 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">🔍 فیلتر کنید</h5>
+                <form method="get" class="form">
+                    <div class="mb-3">
+                        <label for="search" class="form-label">جستجو</label>
+                        <input type="text" name="search" id="search" class="form-control" placeholder="جستجو کنید..." value="{{ search }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="category" class="form-label">دسته‌بندی</label>
+                        <select name="category" id="category" class="form-select">
+                            <option value="">تمام دسته‌ها</option>
+                            {% for category in categories %}
+                            <option value="{{ category.slug }}">{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="price_range" class="form-label">رنج قیمت</label>
+                        <select name="price_range" id="price_range" class="form-select">
+                            <option value="">تمام قیمت‌ها</option>
+                            <option value="low">کمتر از 100,000 تومان</option>
+                            <option value="medium">100,000 - 500,000 تومان</option>
+                            <option value="high">بیشتر از 500,000 تومان</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">اعمال فیلتر</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-9">
+        <h2 class="mb-4">📦 محصولات</h2>
+        <div class="row">
+            {% for product in products %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.title }}" style="height: 250px; object-fit: cover;">
+                    {% else %}
+                    <div class="bg-light d-flex align-items-center justify-content-center" style="height: 250px;">
+                        <i class="bi bi-image" style="font-size: 3rem; color: #ccc;"></i>
+                    </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.title }}</h5>
+                        <p class="card-text text-muted">{{ product.description|truncatewords:10 }}</p>
+                        <p class="card-text"><small class="text-muted">نویسنده: {{ product.author }}</small></p>
+                        <div class="mb-2">
+                            {% if product.discount_price %}
+                            <span class="product-price">{{ product.discount_price|floatformat:0 }} تومان</span>
+                            <span class="product-discount">{{ product.price|floatformat:0 }} تومان</span>
+                            {% else %}
+                            <span class="product-price">{{ product.price|floatformat:0 }} تومان</span>
+                            {% endif %}
+                        </div>
+                        <a href="{% url 'product-detail' product.slug %}" class="btn btn-primary btn-sm w-100">جزئیات</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <p class="text-center text-muted py-5">محصولی یافت نشد</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

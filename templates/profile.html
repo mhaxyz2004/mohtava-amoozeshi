@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block title %}پروفیل - محتوای آموزشی{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-body text-center">
+                {% if profile.avatar %}
+                <img src="{{ profile.avatar.url }}" class="rounded-circle mb-3" alt="{{ user.username }}" style="width: 150px; height: 150px; object-fit: cover;">
+                {% else %}
+                <div class="rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 150px; height: 150px;">
+                    <i class="bi bi-person" style="font-size: 3rem; color: #ccc;"></i>
+                </div>
+                {% endif %}
+                <h3>{{ user.get_full_name|default:user.username }}</h3>
+                <p class="text-muted">@{{ user.username }}</p>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-body">
+                <h5 class="card-title">اطلاعات</h5>
+                <p><strong>ایمیل:</strong> {{ user.email }}</p>
+                <p><strong>تلفن:</strong> {{ profile.phone|default:"ثبت‌نشده" }}</p>
+                <p><strong>شهر:</strong> {{ profile.city|default:"ثبت‌نشده" }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">ویرایش پروفیل</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+                    {% for field in form %}
+                    <div class="mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                        <div class="alert alert-danger mt-2">
+                            {{ field.errors }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary">بروزرسانی</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">محصولات خریداری‌شده</h5>
+            </div>
+            <div class="card-body">
+                {% if orders %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>محصول</th>
+                                <th>مبلغ</th>
+                                <th>وضعیت</th>
+                                <th>تاریخ</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders %}
+                            <tr>
+                                <td>{{ order.product.title }}</td>
+                                <td>{{ order.amount|floatformat:0 }} تومان</td>
+                                <td>
+                                    {% if order.status == 'completed' %}
+                                    <span class="badge bg-success">تکمیل‌شده</span>
+                                    {% elif order.status == 'pending' %}
+                                    <span class="badge bg-warning">در انتظار</span>
+                                    {% else %}
+                                    <span class="badge bg-danger">ناموفق</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ order.created_at|date:"j F Y" }}</td>
+                                <td>
+                                    {% if order.status == 'completed' %}
+                                    <a href="{% url 'download' order.id %}" class="btn btn-sm btn-info">دانلود</a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">هنوز محصولی خریداری‌نشده است</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

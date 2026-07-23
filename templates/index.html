@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}صفحه اصلی - محتوای آموزشی{% endblock %}
+
+{% block content %}
+<div class="hero-section mb-5 py-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 10px;">
+    <h1 class="mb-3">🎓 خوش آمدید به محتوای آموزشی</h1>
+    <p class="lead">بهترین محتوای آموزشی برای رشد و یادگیری شما</p>
+    <a href="{% url 'product-list' %}" class="btn btn-light btn-lg">شروع خرید</a>
+</div>
+
+<h2 class="mb-4">🌟 محصولات برتر</h2>
+<div class="row">
+    {% for product in featured_products %}
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.title }}" style="height: 250px; object-fit: cover;">
+            {% else %}
+            <div class="bg-light d-flex align-items-center justify-content-center" style="height: 250px;">
+                <i class="bi bi-image" style="font-size: 3rem; color: #ccc;"></i>
+            </div>
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ product.title }}</h5>
+                <p class="card-text text-muted">{{ product.description|truncatewords:15 }}</p>
+                <div class="mb-3">
+                    {% if product.discount_price %}
+                    <span class="product-price">{{ product.discount_price|floatformat:0 }} تومان</span>
+                    <span class="product-discount">{{ product.price|floatformat:0 }} تومان</span>
+                    {% else %}
+                    <span class="product-price">{{ product.price|floatformat:0 }} تومان</span>
+                    {% endif %}
+                </div>
+                <div class="mb-3">
+                    <span class="rating">
+                        {% for i in "12345" %}
+                            {% if i|add:"0" <= product.average_rating %}
+                            ⭐
+                            {% else %}
+                            ☆
+                            {% endif %}
+                        {% endfor %}
+                    </span>
+                </div>
+                <a href="{% url 'product-detail' product.slug %}" class="btn btn-primary w-100">مشاهده جزئیات</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <p class="text-center text-muted">هنوز محصولی برتر وجود ندارد</p>
+    </div>
+    {% endfor %}
+</div>
+
+<h2 class="mt-5 mb-4">📚 دسته‌بندی‌ها</h2>
+<div class="row">
+    {% for category in categories %}
+    <div class="col-md-3 mb-3">
+        <a href="{% url 'product-list' %}?category={{ category.slug }}" class="card text-center text-decoration-none">
+            <div class="card-body">
+                <i class="bi bi-{{ category.icon }}" style="font-size: 2rem; color: #667eea;"></i>
+                <h5 class="card-title mt-3">{{ category.name }}</h5>
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
